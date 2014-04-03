@@ -1,0 +1,54 @@
+#imaginary_image_field .inside {
+    overflow: hidden;
+    margin: 0px;
+}
+.imaginary-image-wrapper {
+    float: left;
+    position: relative;
+    margin: 10px 13px 0px 0px;
+}
+.imaginary-image-wrapper:nth-child(9n) {
+    margin-right: 0px;
+}
+.imaginary-image-wrapper img {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 10px;
+}
+.imaginary-image-wrapper span {
+    width: 10px;
+    height: 10px;
+    border: 2px solid white;
+    border-radius: 10px;
+    background: white url(../../../../wp-admin/images/xit.gif);
+    text-indent: -9999px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+.imaginary-image-wrapper span:hover {
+    background-position: 10px 0px;
+    cursor: pointer;
+}
+#imaginary-image-button {
+    text-align: center;
+    margin-top: 10px;
+    background: #f3f3f3;
+    border: 0px;
+    box-shadow: none;
+    border-radius: 10px;
+    height: 80px;
+    width: 80px;
+}
+#imaginary-image-button span {
+    display: block;
+    font-size: 60px;
+    line-height: 80px;
+    color: #ddd;
+}
+#imaginary-image-button:hover span {
+    color: #aaa;
+}
+#imaginary-settings-overridden {
+    margin-top: 10px;
+}
