@@ -65,7 +65,7 @@ function imaginary_image_field() {
     $output = '';
 
     $image_ids = get_post_meta($post->ID, 'imaginary_images');
-    if ($image_ids) {
+    if ($image_ids[0]) {
         foreach($image_ids[0] as $index => $image_id) {
             $image_data = imaginary_get_image_data($image_id, 'thumbnail');
 
