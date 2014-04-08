@@ -15,7 +15,7 @@
     max-height: 80px;
     border-radius: 10px;
 }
-.imaginary-image-wrapper span {
+.imaginary-image-wrapper .imaginary-delete-image {
     width: 10px;
     height: 10px;
     border: 2px solid white;
@@ -26,9 +26,25 @@
     top: 5px;
     right: 5px;
 }
-.imaginary-image-wrapper span:hover {
+.imaginary-image-wrapper .imaginary-delete-image:hover {
     background-position: 10px 0px;
     cursor: pointer;
+}
+.imaginary-image-wrapper .imaginary-image-id {
+    display: none;
+    background: #fff;
+    opacity: 0.5;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    line-height: 80px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+.imaginary-image-wrapper:hover .imaginary-image-id {
+    display: block;
 }
 #imaginary-image-button {
     text-align: center;

@@ -71,6 +71,7 @@ function imaginary_image_field() {
 
             $output .= '
                 <div class="imaginary-image-wrapper">
+                    <span class="imaginary-image-id">' . ($index + 1) . '</span>
                     <span class="imaginary-delete-image">delete</span>
                     <img src="' . $image_data['url'] . '">
                     <input type="hidden" name="imaginary_images[]" value="' . $image_id . '">
@@ -132,9 +133,9 @@ function imaginary_images($size = 'thumbnail', $html = false) {
  * @param bool $html
  * @return array with all image options
  */
-function imaginary_image($index = 0, $size = 'thumbnail', $html = false) {
+function imaginary_image($index = 1, $size = 'thumbnail', $html = false) {
     $images = imaginary_images($size);
-    $image = $images[$index];
+    $image = $images[$index - 1];
 
     return $html ? imaginary_get_image_tag($image) : $image['url'];
 }

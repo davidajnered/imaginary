@@ -1,8 +1,10 @@
 /**
+ * Inspired and modified from tutorial below.
  * http://mikejolley.com/2012/12/using-the-new-wordpress-3-5-media-uploader-in-plugins/
  */
 jQuery(document).ready(function($) {
-    if (wp.modal != undefined) {
+
+    if (wp.media != undefined) {
         // Uploading files
         var file_frame;
         var wp_media_post_id = wp.media.model.settings.post.id; // Store the old id
@@ -37,10 +39,13 @@ jQuery(document).ready(function($) {
                 // We set multiple to false so only get one image from the uploader
                 attachment = file_frame.state().get('selection').first().toJSON();
 
-                // Insert image to post type
-                console.log(attachment);
+                // Calculate index
+                var index = $('.imaginary-image-wrapper').length + 1;
 
+                // Insert image to post type
                 var output = '<div class="imaginary-image-wrapper">' +
+                        '<span class="imaginary-image-id">' + index + '</span>' +
+                        '<span class="imaginary-delete-image">delete</span>' +
                         '<img src="' + attachment.sizes.thumbnail.url + '">' +
                         '<input type="hidden" name="imaginary_images[]" value="' + attachment.id + '">' +
                     '</div>';

@@ -1,5 +1,5 @@
 jQuery(document).ready(function($) {
-    $('.imaginary-delete-image').click(function() {
+    $(document).on('click', '.imaginary-delete-image', function() {
         $(this).parent().remove();
     });
 });
