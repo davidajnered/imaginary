@@ -2,7 +2,7 @@
 Imaginary adds duplicatable image fields to your post types. You select your images in the standard wordpress media modal, and the image ids are saved as meta data to your post.
 
 ### Enable
-Except installing the plugin you have to enable it for the post types you want to use it with. You find the setting under general -> media.
+Except installing the plugin you have to enable it for the post types you want to use it with. You find the setting under settings -> media.
 
 ## Usage
 Get all imaginary images for a post. The $size variable returns a specific size and $html determines if an array with the image url's or img tags should be return.
