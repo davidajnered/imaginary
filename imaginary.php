@@ -1,12 +1,11 @@
 <?php
-/**
- * @package imaginary
- * @version 0.1
- */
 /*
-Plugin Name: Imaginary
-Author: David Ajnered
-*/
+ * Plugin Name: Imaginary
+ * Version: 1.0.0
+ * Plugin URI: http://www.davidajnered.com/
+ * Description: Add extra images to your wordpress post types.
+ * Author: David Ajnered
+ */
 
 /**
  * Define plugin actions.

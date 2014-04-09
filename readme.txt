@@ -1,13 +1,13 @@
 === Plugin Name ===
 Contributors: davidajnered
 Donate link: http://www.davidajnered.com/
-Tags: image, images, field, extra, meta, duplicatable
+Tags: extra images, image, images, field, extra, meta, duplicatable, custom post type images, image gallery, multiple images, post gallery, post images
 Requires at least: 3.8
 Tested up to: 3.8.1
-Stable tag: 1.0
+Stable tag: 1.0.0
 License: GPLv2 or later
 
-Add extra images to your wordpress post types
+Add extra images to your wordpress post types.
 
 == Description ==
 
