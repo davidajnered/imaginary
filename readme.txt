@@ -1,6 +1,7 @@
 === Plugin Name ===
-Contributors: Davud Ajnered
-Tags: image, images, field, extra, meta, duplicatable,
+Contributors: davidajnered
+Donate link: http://www.davidajnered.com/
+Tags: image, images, field, extra, meta, duplicatable
 Requires at least: 3.8
 Tested up to: 3.8.1
 Stable tag: 1.0
