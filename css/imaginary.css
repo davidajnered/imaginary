@@ -1,70 +1,48 @@
 #imaginary_image_field .inside {
     overflow: hidden;
     margin: 0px;
+    padding: 12px;
 }
-.imaginary-image-wrapper {
+.imaginary-image {
     float: left;
     position: relative;
-    margin: 10px 13px 0px 0px;
+    margin: 8px;
 }
-.imaginary-image-wrapper:nth-child(9n) {
-    margin-right: 0px;
+.imaginary-image:hover {
+    cursor: move;
 }
-.imaginary-image-wrapper img {
-    max-width: 80px;
-    max-height: 80px;
-    border-radius: 10px;
+.imaginary-image img {
+    max-width: 108px;
+    max-height: 108px;
+    display: block;
 }
-.imaginary-image-wrapper .imaginary-delete-image {
-    width: 10px;
-    height: 10px;
-    border: 2px solid white;
-    border-radius: 10px;
-    background: white url(../../../../wp-admin/images/xit.gif);
-    text-indent: -9999px;
-    position: absolute;
-    top: 5px;
-    right: 5px;
-}
-.imaginary-image-wrapper .imaginary-delete-image:hover {
-    background-position: 10px 0px;
-    cursor: pointer;
-}
-.imaginary-image-wrapper .imaginary-image-id {
+.imaginary-image-menu {
     display: none;
-    background: #fff;
-    opacity: 0.5;
+}
+.imaginary-image:hover .imaginary-image-menu {
+    display: block;
+}
+.imaginary-image .imaginary-image-id {
     position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-    line-height: 80px;
-    font-size: 20px;
-    font-weight: bold;
-    text-align: center;
+    top: -6px;
+    left: -6px;
+    font-size: 12px;
+    line-height: 23px;
+    width: 26px;
+    text-shadow: 0px 1px 2px #555;
 }
-.imaginary-image-wrapper:hover .imaginary-image-id {
+.imaginary-image .check div {
+    background-position: -60px 0px !important;
+}
+a#imaginary-image-add {
     display: block;
-}
-#imaginary-image-button {
-    text-align: center;
-    margin-top: 10px;
-    background: #f3f3f3;
-    border: 0px;
-    box-shadow: none;
-    border-radius: 10px;
-    height: 80px;
-    width: 80px;
-}
-#imaginary-image-button span {
-    display: block;
-    font-size: 60px;
-    line-height: 80px;
-    color: #ddd;
-}
-#imaginary-image-button:hover span {
-    color: #aaa;
+    padding: 5px 0px 0px 3px;
+    clear: both;
 }
 #imaginary-settings-overridden {
     margin-top: 10px;
+}
+.ui-sortable-placeholder {
+    background: #eee !important;
+    visibility: visible !important;
 }

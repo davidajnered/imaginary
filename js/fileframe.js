@@ -10,7 +10,7 @@ jQuery(document).ready(function($) {
         var wp_media_post_id = wp.media.model.settings.post.id; // Store the old id
         var set_to_post_id = 10; // Set this
 
-        $('#imaginary-image-button').live('click', function(event) {
+        $('#imaginary-image-add').live('click', function(event) {
             event.preventDefault();
 
             // If the media frame already exists, reopen it.
@@ -40,17 +40,22 @@ jQuery(document).ready(function($) {
                 attachment = file_frame.state().get('selection').first().toJSON();
 
                 // Calculate index
-                var index = $('.imaginary-image-wrapper').length + 1;
+                var index = $('.imaginary-image').length + 1;
 
                 // Insert image to post type
-                var output = '<div class="imaginary-image-wrapper">' +
-                        '<span class="imaginary-image-id">' + index + '</span>' +
-                        '<span class="imaginary-delete-image">delete</span>' +
+                var output = '' +
+                    '<div class="imaginary-image attachment selected details">' +
+                        '<div class="imaginary-image-menu">' +
+                            '<span class="imaginary-image-id check wp-core-ui wp-ui-highlight">#' + index + '</span>' +
+                            '<a class="imaginary-image-delete check" href="#" title="Deselect"><div class="media-modal-icon"></div></a>' +
+                        '</div>' +
                         '<img src="' + attachment.sizes.thumbnail.url + '">' +
                         '<input type="hidden" name="imaginary_images[]" value="' + attachment.id + '">' +
                     '</div>';
 
-                $('#imaginary-image-button').before(output);
+                $('.imaginary-image-wrapper').append(output);
+
+                imaginarySortable();
 
                 // Restore the main post ID
                 wp.media.model.settings.post.id = wp_media_post_id;

@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: Imaginary
- * Version: 1.0.0
+ * Version: 1.1.0
  * Plugin URI: http://www.davidajnered.com/
  * Description: Add extra images to your wordpress post types.
  * Author: David Ajnered
@@ -61,7 +61,7 @@ function imaginary_create_field() {
  */
 function imaginary_image_field() {
     global $post;
-    $output = '';
+    $output = '<div class="imaginary-image-wrapper sortable">';
 
     $image_ids = get_post_meta($post->ID, 'imaginary_images');
     if ($image_ids[0]) {
@@ -69,9 +69,11 @@ function imaginary_image_field() {
             $image_data = imaginary_get_image_data($image_id, 'thumbnail');
 
             $output .= '
-                <div class="imaginary-image-wrapper">
-                    <span class="imaginary-image-id">' . ($index + 1) . '</span>
-                    <span class="imaginary-delete-image">delete</span>
+                <div class="imaginary-image attachment selected details">
+                    <div class="imaginary-image-menu">
+                        <span class="imaginary-image-id check wp-core-ui wp-ui-highlight">#' . ($index + 1) . '</span>
+                        <a class="imaginary-image-delete check" href="#" title="Deselect"><div class="media-modal-icon"></div></a>
+                    </div>
                     <img src="' . $image_data['url'] . '">
                     <input type="hidden" name="imaginary_images[]" value="' . $image_id . '">
                 </div>
@@ -79,7 +81,10 @@ function imaginary_image_field() {
         }
     }
 
-    print $output . '<button class="button" id="imaginary-image-button"><span>+</span></button>';
+    $output .= '</div>';
+    $output .= '<a id="imaginary-image-add" href="#">Add image</a>';
+
+    print $output;
 }
 
 /**
