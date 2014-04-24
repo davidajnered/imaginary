@@ -171,13 +171,14 @@ function imaginary_shortcode($attributes)
  */
 function imaginary_get_image_tag($image)
 {
-    $tag = '
+    $html = '
         <img src="' . $image['url'] . '"
              id="imaginary-image-' . $image['id'] . '"
              width="' . $image['width'] . '"
-             height="' . $image['height'] . '">';
+             height="' . $image['height'] . '"
+             alt="' . $image['alt_text'] . '">';
 
-    return $tag;
+    return $html;
 }
 
 /**
@@ -189,12 +190,14 @@ function imaginary_get_image_tag($image)
 function imaginary_get_image_data($image_id, $size = 'thumbnail')
 {
     $image = wp_get_attachment_image_src($image_id, $size);
+    $alt_text = get_post_meta($image_id, '_wp_attachment_image_alt');
     return array(
         'url' => $image[0],
         'width' => $image[1],
         'height' => $image[2],
         'resized' => $image[3],
-        'id' => $image_id
+        'id' => $image_id,
+        'alt_text' => $alt_text[0]
     );
 }
 
