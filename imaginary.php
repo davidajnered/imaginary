@@ -123,16 +123,17 @@ function imaginary_images($size = 'thumbnail', $html = false)
 {
     global $post;
     $images = array();
-    $output = '';
-
     $image_ids = get_post_meta($post->ID, 'imaginary_images');
+
+    $output = '<ul class="imaginary">';
     if ($image_ids) {
         foreach ($image_ids[0] as $index => $image_id) {
             $image = imaginary_get_image_data($image_id, $size);
             $images[$index] = $image;
-            $output .= imaginary_get_image_tag($image);
+            $output .= '<li>' . imaginary_get_image_tag($image) . '</li>';
         }
     }
+    $output .= '</ul>';
 
     return $html ? $output : $images;
 }
