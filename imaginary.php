@@ -160,8 +160,8 @@ function imaginary_image($index = 1, $size = 'thumbnail', $html = false)
  */
 function imaginary_shortcode($attributes)
 {
-    extract($attributes);
-    print imaginary_image($index, $size, true);
+    $size = isset($attributes['size']) ? $attributes['size'] : 'medium';
+    print isset($attributes['index']) ? imaginary_image($index, $size, true) : imaginary_images($size, true);
 }
 
 /**
