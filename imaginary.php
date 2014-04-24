@@ -25,7 +25,8 @@ $db_settings_overridden = false;
 /**
  * Init...
  */
-function imaginary_init() {
+function imaginary_init()
+{
     // If function exist, override settings
     if (function_exists('imaginary_settings')) {
         global $db_settings_overridden;
@@ -36,7 +37,8 @@ function imaginary_init() {
 /**
  * Create the extra post type fields.
  */
-function imaginary_create_field() {
+function imaginary_create_field()
+{
     $post_types = get_option('imaginary_settings_post_types');
 
     if ($db_settings_overridden) {
@@ -59,20 +61,23 @@ function imaginary_create_field() {
 /**
  * Load added images and button and print to DOM.
  */
-function imaginary_image_field() {
+function imaginary_image_field()
+{
     global $post;
     $output = '<div class="imaginary-image-wrapper sortable">';
 
     $image_ids = get_post_meta($post->ID, 'imaginary_images');
     if ($image_ids[0]) {
-        foreach($image_ids[0] as $index => $image_id) {
+        foreach ($image_ids[0] as $index => $image_id) {
             $image_data = imaginary_get_image_data($image_id, 'thumbnail');
 
             $output .= '
                 <div class="imaginary-image attachment selected details">
                     <div class="imaginary-image-menu">
                         <span class="imaginary-image-id check wp-core-ui wp-ui-highlight">#' . ($index + 1) . '</span>
-                        <a class="imaginary-image-delete check" href="#" title="Deselect"><div class="media-modal-icon"></div></a>
+                        <a class="imaginary-image-delete check" href="#" title="Deselect">
+                            <div class="media-modal-icon"></div>
+                        </a>
                     </div>
                     <img src="' . $image_data['url'] . '">
                     <input type="hidden" name="imaginary_images[]" value="' . $image_id . '">
@@ -90,7 +95,8 @@ function imaginary_image_field() {
 /**
  * Add style and scripts.
  */
-function imaginary_load_js_and_css() {
+function imaginary_load_js_and_css()
+{
     wp_enqueue_script('jquery');
     wp_enqueue_script('imaginary', '/wp-content/plugins/imaginary/js/imaginary.js', array('jquery'));
     wp_enqueue_script('imaginary_fileframe', '/wp-content/plugins/imaginary/js/fileframe.js', array('jquery'));
@@ -102,7 +108,8 @@ function imaginary_load_js_and_css() {
  *
  * @param int $post_id
  */
-function imaginary_save_images($post_id) {
+function imaginary_save_images($post_id)
+{
     update_post_meta($post_id, 'imaginary_images', $_POST['imaginary_images']);
 }
 
@@ -112,14 +119,15 @@ function imaginary_save_images($post_id) {
  * @param string $size
  * @return array with all images and all options
  */
-function imaginary_images($size = 'thumbnail', $html = false) {
+function imaginary_images($size = 'thumbnail', $html = false)
+{
     global $post;
     $images = array();
     $output = '';
 
     $image_ids = get_post_meta($post->ID, 'imaginary_images');
     if ($image_ids) {
-        foreach($image_ids[0] as $index => $image_id) {
+        foreach ($image_ids[0] as $index => $image_id) {
             $image = imaginary_get_image_data($image_id, $size);
             $images[$index] = $image;
             $output .= imaginary_get_image_tag($image);
@@ -137,7 +145,8 @@ function imaginary_images($size = 'thumbnail', $html = false) {
  * @param bool $html
  * @return array with all image options
  */
-function imaginary_image($index = 1, $size = 'thumbnail', $html = false) {
+function imaginary_image($index = 1, $size = 'thumbnail', $html = false)
+{
     $images = imaginary_images($size);
     $image = $images[$index - 1];
 
@@ -149,7 +158,8 @@ function imaginary_image($index = 1, $size = 'thumbnail', $html = false) {
  *
  * @param array $attributes
  */
-function imaginary_shortcode($attributes) {
+function imaginary_shortcode($attributes)
+{
     extract($attributes);
     print imaginary_image($index, $size, true);
 }
@@ -159,7 +169,8 @@ function imaginary_shortcode($attributes) {
  *
  * @param array $attributes
  */
-function imaginary_get_image_tag($image) {
+function imaginary_get_image_tag($image)
+{
     $tag = '
         <img src="' . $image['url'] . '"
              id="imaginary-image-' . $image['id'] . '"
@@ -175,7 +186,8 @@ function imaginary_get_image_tag($image) {
  * @param array $image
  * @return array
  */
-function imaginary_get_image_data($image_id, $size = 'thumbnail') {
+function imaginary_get_image_data($image_id, $size = 'thumbnail')
+{
     $image = wp_get_attachment_image_src($image_id, $size);
     return array(
         'url' => $image[0],
@@ -189,7 +201,8 @@ function imaginary_get_image_data($image_id, $size = 'thumbnail') {
 /**
  * Register post type fields for settings/media page
  */
-function imaginary_create_admin_settings() {
+function imaginary_create_admin_settings()
+{
     register_setting('media', 'imaginary_settings_post_types');
     add_settings_field('imaginary_settings_post_types', 'Imaginary', 'imaginary_settings_callback', 'media');
 }
@@ -197,7 +210,8 @@ function imaginary_create_admin_settings() {
 /**
  * Render post type setting fields
  */
-function imaginary_settings_callback($args) {
+function imaginary_settings_callback($args)
+{
     if (!($saved_values = get_option('imaginary_settings_post_types'))) {
         $saved_values = array();
     }
@@ -205,7 +219,7 @@ function imaginary_settings_callback($args) {
     $checkbox = '<label><input type="checkbox" name="imaginary_settings_post_types[]" value="%s"%s>%s</label><br>';
 
     $output = '';
-    foreach(get_post_types(array('public' => true)) as $post_type) {
+    foreach (get_post_types(array('public' => true)) as $post_type) {
         if ($post_type != 'attachment') {
             $selected = in_array($post_type, $saved_values) ? ' checked' : '';
             $output .= sprintf($checkbox, $post_type, $selected, ucfirst($post_type));

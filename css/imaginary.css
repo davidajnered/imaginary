@@ -29,14 +29,14 @@
     font-size: 12px;
     line-height: 23px;
     width: 26px;
-    text-shadow: 0px 1px 2px #555;
+    text-shadow: 0 1px 2px #555;
 }
 .imaginary-image .check div {
-    background-position: -60px 0px !important;
+    background-position: -60px 0 !important;
 }
 a#imaginary-image-add {
     display: block;
-    padding: 5px 0px 0px 3px;
+    padding: 5px 0 0 3px;
     clear: both;
 }
 #imaginary-settings-overridden {
