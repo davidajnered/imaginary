@@ -222,7 +222,7 @@ function imaginary_settings_callback($args)
 
     $checkbox = '<label><input type="checkbox" name="imaginary_settings_post_types[]" value="%s"%s>%s</label><br>';
 
-    $output = '';
+    $output = 'Enable Imaginary for your content types<br><br>';
     foreach (get_post_types(array('public' => true)) as $post_type) {
         if ($post_type != 'attachment') {
             $selected = in_array($post_type, $saved_values) ? ' checked' : '';
