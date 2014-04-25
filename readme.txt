@@ -1,9 +1,9 @@
 === Plugin Name ===
 Contributors: davidajnered
 Donate link: http://www.davidajnered.com/
-Tags: image, images, field, extra, meta, duplicatable
-Requires at least: 3.8
-Tested up to: 3.8.1
+Tags: image, images, duplicatable images, multiple images, slideshow, gallery, extra field, meta, posts, pages, custom post types,
+Requires at least: 3.0
+Tested up to: 3.9.0
 Stable tag: 1.1.0
 License: GPLv2 or later
 
