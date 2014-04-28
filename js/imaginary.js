@@ -17,12 +17,14 @@ function imaginarySortable() {
         jQuery('.imaginary-image-wrapper.sortable').sortable('cancel');
     }
 
-    jQuery('.imaginary-image-wrapper.sortable').sortable({
-        revert: true,
-        stop: function() {
-            reindexImages();
-        }
-    });
+    if (jQuery('.imaginary-image-wrapper.sortable').length) {
+        jQuery('.imaginary-image-wrapper.sortable').sortable({
+            revert: true,
+            stop: function() {
+                reindexImages();
+            }
+        });
+    }
 }
 
 /**

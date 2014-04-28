@@ -41,6 +41,7 @@ jQuery(document).ready(function($) {
 
                 // Calculate index
                 var index = $('.imaginary-image').length + 1;
+                var url = attachment.sizes != undefined ? attachment.sizes.thumbnail.url : attachment.url;
 
                 // Insert image to post type
                 var output = '' +
@@ -49,7 +50,7 @@ jQuery(document).ready(function($) {
                             '<span class="imaginary-image-id check wp-core-ui wp-ui-highlight">#' + index + '</span>' +
                             '<a class="imaginary-image-delete check" href="#" title="Deselect"><div class="media-modal-icon"></div></a>' +
                         '</div>' +
-                        '<img src="' + attachment.sizes.thumbnail.url + '">' +
+                        '<img src="' + url + '">' +
                         '<input type="hidden" name="imaginary_images[]" value="' + attachment.id + '">' +
                     '</div>';
 
