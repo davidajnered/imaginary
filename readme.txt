@@ -16,7 +16,7 @@ Imaginary adds duplicatable image fields to your post types. You select your ima
 Except installing the plugin you have to enable it for the post types you want to use it with. You find the setting under settings -> media.
 
 == Usage Imaginary ==
-The <b>$options</b> array contains variables to control the function output. All values are optional, the plugin have fallbacks for everything.
+The <b>options</b> array contains variables to control the function output. All values are optional, the plugin have fallbacks for everything.
 
 <pre>
 <b>(int) index</b> - index number of the image you want to display.
@@ -52,6 +52,9 @@ In the example below we display the large version of the image with index one.
 `
 [imaginary index="1" size="large"]
 `
+
+`Slideshow`
+Imaginary uses jQuery Cycle. To customize your slideshow, override the function call to cycle in your own javascript file. See http://jquery.malsup.com/cycle for options.
 
 
 = Override settings =
