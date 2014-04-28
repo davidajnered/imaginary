@@ -131,13 +131,18 @@ function imaginary_save_images($post_id)
  * @param array $options
  * @return array with all images and all options
  */
-function imaginary_images($options = array())
+function imaginary_images($user_options = array())
 {
     global $post;
+
+
+    // Merge user options with default values
+    $options =  array_merge(imaginary_get_option_defaults(), $user_options);
 
     $images = array();
     $image_ids = get_post_meta($post->ID, 'imaginary_images');
     $cycle_class = $options['cycle'] == true ? ' cycle' : '';
+    $html = !isset($options['html']) ? true : $options['html'];
 
     // Build output at the same time as looping data
     $output = '<ul class="imaginary' . $cycle_class . '">';
@@ -151,7 +156,7 @@ function imaginary_images($options = array())
     $output .= '</ul>';
 
     // User input decides if output or the raw array with data is returned
-    return $options['html'] ? $output : $images;
+    return $html ? $output : $images;
 }
 
 /**
@@ -160,16 +165,33 @@ function imaginary_images($options = array())
  * @param array $options
  * @return array with all image options
  */
-function imaginary_image($options = array())
+function imaginary($user_options = array())
 {
-    if (!isset($options['index']) && !is_numberic($options['index'])) {
-        trigger_error('Invalid image index', E_USER_ERROR);
+    global $post;
+
+    // Merge user options with default values
+    $options =  array_merge(imaginary_get_option_defaults(), $user_options);
+
+    // Some data
+    $images = array();
+    $image_ids = get_post_meta($post->ID, 'imaginary_images');
+    $cycle_class = $options['cycle'] == true ? ' cycle' : '';
+
+    // Build output at the same time as looping data
+    $output = '<ul class="imaginary' . $cycle_class . '">';
+    if ($image_ids) {
+        foreach ($image_ids[0] as $index => $image_id) {
+            // If index is set and equal to the one in the loop, or if index is not set at all
+            if ((isset($options['index']) && $options['index'] == $index + 1) || !isset($options['index'])) {
+                $image = imaginary_get_image_data($image_id, $options['size']);
+                $images[$index] = $image;
+                $output .= '<li>' . imaginary_get_image_tag($image) . '</li>';
+            }
+        }
     }
+    $output .= '</ul>';
 
-    $images = imaginary_images($options);
-    $image = $images[$options['index'] - 1];
-
-    return $options['html'] ? imaginary_get_image_tag($image) : $image['url'];
+    return $options['html'] ? $output : $images;
 }
 
 /**
@@ -183,10 +205,11 @@ function imaginary_shortcode($attributes)
         $attributes = array();
     }
 
-    $options = array();
-    $options['index'] = isset($attributes['index']) ? $attributes['index'] : null;
-    $options['size'] = isset($attributes['size']) ? $attributes['size'] : 'medium';
-    $options['cycle'] = in_array('cycle', $attributes) ? true : false;
+    $options = imaginary_get_option_defaults();
+    $options['index'] = isset($attributes['index']) ? $attributes['index'] : $options['index'];
+    $options['size'] = isset($attributes['size']) ? $attributes['size'] : $options['size'];
+    $options['cycle'] = in_array('cycle', $attributes) ? true : $options['cycle'];
+    $options['html'] = true;
 
     // Validate index if set
     if (isset($options['index']) && !is_numeric($options['index'])) {
@@ -199,6 +222,21 @@ function imaginary_shortcode($attributes)
     } else {
         print imaginary_images($options, true);
     }
+}
+
+/**
+ * Get option default values.
+ *
+ * @return array
+ */
+function imaginary_get_option_defaults()
+{
+    return array(
+        'index' => null,
+        'size' => 'medium',
+        'cycle' => false,
+        'html' => true
+    );
 }
 
 /**

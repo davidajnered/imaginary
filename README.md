@@ -8,21 +8,30 @@ Except installing the plugin you have to enable it for the post types you want t
 The <b>options</b> array contains variables to control the function output. All values are optional, the plugin have fallbacks for everything.
 
 <pre>
-<b>(int) index</b> - index number of the image you want to display.
-<b>(string) size</b> - name of your image size
-<b>(bool) cycle</b> - display images as a slideshow
-<b>(bool) html</b> - print html or return an array with data
+<b>(int) index</b>
+    index of a specific image. If empty all images are returned.
+    <i>Default: null</i>
+<b>(string) size</b>
+    name of your image size.
+    <i>Default: medium</i>
+<b>(bool) cycle</b>
+    display images as a slideshow
+    <i>Default: false</i>
+<b>(bool) html</b>
+    return html or array with data
+    <i>Default: true</i>
 </pre>
 
-### Get all imaginary images for a post
+### Simple example
+The example below will show you all selected images as a list. The default values seen above will be used.
 ```
-imaginary_images($options = array());
+imaginary();
 ```
 
 ### Get a specific imaginary images
-Use the <b>index</b> option to select the image you want. Image index starts at one. Hover the image when editing your post or page to see the index number.
+Use the <b>index</b> option to select the image you want. Image index starts at one. Hover the image when editing your post or page to see the index number. Use any of the other options to customize your use of Imaginary.
 ```
-imaginary_image($options = array());
+imaginary(array('index' => 1));
 ```
 
 ### Shortcode
