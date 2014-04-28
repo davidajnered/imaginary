@@ -12,7 +12,8 @@
  */
 add_action('init', 'imaginary_init');
 add_action('add_meta_boxes', 'imaginary_create_field');
-add_action('admin_enqueue_scripts', 'imaginary_load_js_and_css');
+add_action('admin_enqueue_scripts', 'imaginary_load_admin_js_and_css');
+add_action('wp_enqueue_scripts', 'imaginary_load_front_js_and_css');
 add_action('save_post', 'imaginary_save_images');
 add_action('admin_init', 'imaginary_create_admin_settings');
 add_shortcode('imaginary', 'imaginary_shortcode');
@@ -95,12 +96,23 @@ function imaginary_image_field()
 /**
  * Add style and scripts.
  */
-function imaginary_load_js_and_css()
+function imaginary_load_admin_js_and_css()
 {
     wp_enqueue_script('jquery');
     wp_enqueue_script('imaginary', '/wp-content/plugins/imaginary/js/imaginary.js', array('jquery'));
     wp_enqueue_script('imaginary_fileframe', '/wp-content/plugins/imaginary/js/fileframe.js', array('jquery'));
     wp_enqueue_style('imaginary', '/wp-content/plugins/imaginary/css/imaginary.css');
+}
+
+/**
+ * Add style and scripts.
+ */
+function imaginary_load_front_js_and_css()
+{
+    wp_enqueue_script('jquery');
+    wp_enqueue_script('jquery_cycle', '/wp-content/plugins/imaginary/js/jquery.cycle.all.js', array('jquery'));
+    wp_enqueue_script('imaginary-front', '/wp-content/plugins/imaginary/js/imaginary-front.js', array('jquery'));
+    wp_enqueue_style('imaginary-front', '/wp-content/plugins/imaginary/css/imaginary-front.css');
 }
 
 /**
@@ -116,42 +128,48 @@ function imaginary_save_images($post_id)
 /**
  * Return all images.
  *
- * @param string $size
+ * @param array $options
  * @return array with all images and all options
  */
-function imaginary_images($size = 'thumbnail', $html = false)
+function imaginary_images($options = array())
 {
     global $post;
+
     $images = array();
     $image_ids = get_post_meta($post->ID, 'imaginary_images');
+    $cycle_class = $options['cycle'] == true ? ' cycle' : '';
 
-    $output = '<ul class="imaginary">';
+    // Build output at the same time as looping data
+    $output = '<ul class="imaginary' . $cycle_class . '">';
     if ($image_ids) {
         foreach ($image_ids[0] as $index => $image_id) {
-            $image = imaginary_get_image_data($image_id, $size);
+            $image = imaginary_get_image_data($image_id, $options['size']);
             $images[$index] = $image;
             $output .= '<li>' . imaginary_get_image_tag($image) . '</li>';
         }
     }
     $output .= '</ul>';
 
-    return $html ? $output : $images;
+    // User input decides if output or the raw array with data is returned
+    return $options['html'] ? $output : $images;
 }
 
 /**
  * Return a specific image.
  *
- * @param int $index
- * @param string $size
- * @param bool $html
+ * @param array $options
  * @return array with all image options
  */
-function imaginary_image($index = 1, $size = 'thumbnail', $html = false)
+function imaginary_image($options = array())
 {
-    $images = imaginary_images($size);
-    $image = $images[$index - 1];
+    if (!isset($options['index']) && !is_numberic($options['index'])) {
+        trigger_error('Invalid image index', E_USER_ERROR);
+    }
 
-    return $html ? imaginary_get_image_tag($image) : $image['url'];
+    $images = imaginary_images($options);
+    $image = $images[$options['index'] - 1];
+
+    return $options['html'] ? imaginary_get_image_tag($image) : $image['url'];
 }
 
 /**
@@ -161,14 +179,32 @@ function imaginary_image($index = 1, $size = 'thumbnail', $html = false)
  */
 function imaginary_shortcode($attributes)
 {
-    $size = isset($attributes['size']) ? $attributes['size'] : 'medium';
-    print isset($attributes['index']) ? imaginary_image($index, $size, true) : imaginary_images($size, true);
+    if (empty($attributes)) {
+        $attributes = array();
+    }
+
+    $options = array();
+    $options['index'] = isset($attributes['index']) ? $attributes['index'] : null;
+    $options['size'] = isset($attributes['size']) ? $attributes['size'] : 'medium';
+    $options['cycle'] = in_array('cycle', $attributes) ? true : false;
+
+    // Validate index if set
+    if (isset($options['index']) && !is_numeric($options['index'])) {
+        trigger_error('Invalid image index', E_USER_ERROR);
+    }
+
+    // If index print specific image, else print all images
+    if (is_numeric($options['index']) && (int) $options['index'] > 0) {
+        print imaginary_image($options, true);
+    } else {
+        print imaginary_images($options, true);
+    }
 }
 
 /**
  * Generate img tag.
  *
- * @param array $attributes
+ * @param array $image
  */
 function imaginary_get_image_tag($image)
 {
