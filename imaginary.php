@@ -67,9 +67,9 @@ function imaginary_image_field()
     global $post;
     $output = '<div class="imaginary-image-wrapper sortable">';
 
-    $image_ids = get_post_meta($post->ID, 'imaginary_images');
-    if ($image_ids[0]) {
-        foreach ($image_ids[0] as $index => $image_id) {
+    $image_ids = get_post_meta($post->ID, 'imaginary_images', true);
+    if ($image_ids) {
+        foreach ($image_ids as $index => $image_id) {
             $image_data = imaginary_get_image_data($image_id, 'thumbnail');
 
             $output .= '
@@ -126,40 +126,6 @@ function imaginary_save_images($post_id)
 }
 
 /**
- * Return all images.
- *
- * @param array $options
- * @return array with all images and all options
- */
-function imaginary_images($user_options = array())
-{
-    global $post;
-
-
-    // Merge user options with default values
-    $options =  array_merge(imaginary_get_option_defaults(), $user_options);
-
-    $images = array();
-    $image_ids = get_post_meta($post->ID, 'imaginary_images');
-    $cycle_class = $options['cycle'] == true ? ' cycle' : '';
-    $html = !isset($options['html']) ? true : $options['html'];
-
-    // Build output at the same time as looping data
-    $output = '<ul class="imaginary' . $cycle_class . '">';
-    if ($image_ids) {
-        foreach ($image_ids[0] as $index => $image_id) {
-            $image = imaginary_get_image_data($image_id, $options['size']);
-            $images[$index] = $image;
-            $output .= '<li>' . imaginary_get_image_tag($image) . '</li>';
-        }
-    }
-    $output .= '</ul>';
-
-    // User input decides if output or the raw array with data is returned
-    return $html ? $output : $images;
-}
-
-/**
  * Return a specific image.
  *
  * @param array $options
@@ -169,23 +135,29 @@ function imaginary($user_options = array())
 {
     global $post;
 
-    // Merge user options with default values
-    $options =  array_merge(imaginary_get_option_defaults(), $user_options);
+    $image_ids = get_post_meta($post->ID, 'imaginary_images', true);
 
-    // Some data
-    $images = array();
-    $image_ids = get_post_meta($post->ID, 'imaginary_images');
-    $cycle_class = $options['cycle'] == true ? ' cycle' : '';
+    // Merge user options with default values
+    $options = array_merge(imaginary_get_option_defaults(), $user_options);
+
+    // Classes and styles
+    $classes = $options['cycle'] == true ? ' cycle' : '';
+    $classes .= $options['height'] ? ' fixed-height' : '';
+    $styles = $options['height'] ? ' style="height:' . $options['height'] . 'px;"' : '';
 
     // Build output at the same time as looping data
-    $output = '<ul class="imaginary' . $cycle_class . '">';
+    $images = array();
+    $output = '<ul class="imaginary' . $classes . '"' . $styles . '>';
     if ($image_ids) {
-        foreach ($image_ids[0] as $index => $image_id) {
+        foreach ($image_ids as $index => $image_id) {
             // If index is set and equal to the one in the loop, or if index is not set at all
             if ((isset($options['index']) && $options['index'] == $index + 1) || !isset($options['index'])) {
-                $image = imaginary_get_image_data($image_id, $options['size']);
+                $image = imaginary_get_image_data($image_id, $options);
                 $images[$index] = $image;
-                $output .= '<li>' . imaginary_get_image_tag($image) . '</li>';
+                $output .= '<li>';
+                $output .= imaginary_get_image_tag($image);
+                $output .= '<div class="caption">' . $options['caption'] . '</div>';
+                $outpuy .= '</li>';
             }
         }
     }
@@ -209,6 +181,8 @@ function imaginary_shortcode($attributes)
     $options['index'] = isset($attributes['index']) ? $attributes['index'] : $options['index'];
     $options['size'] = isset($attributes['size']) ? $attributes['size'] : $options['size'];
     $options['cycle'] = in_array('cycle', $attributes) ? true : $options['cycle'];
+    $options['height'] = isset($attributes['height']) ? $attributes['height'] : $options['height'];
+    $options['caption'] = isset($attributes['caption']) ? $attributes['caption'] : $options['caption'];
     $options['html'] = true;
 
     // Validate index if set
@@ -216,12 +190,7 @@ function imaginary_shortcode($attributes)
         trigger_error('Invalid image index', E_USER_ERROR);
     }
 
-    // If index print specific image, else print all images
-    if (is_numeric($options['index']) && (int) $options['index'] > 0) {
-        print imaginary_image($options, true);
-    } else {
-        print imaginary_images($options, true);
-    }
+    print imaginary($options, true);
 }
 
 /**
@@ -235,7 +204,9 @@ function imaginary_get_option_defaults()
         'index' => null,
         'size' => 'medium',
         'cycle' => false,
-        'html' => true
+        'html' => true,
+        'text' => '',
+        'height' => null
     );
 }
 
@@ -250,8 +221,13 @@ function imaginary_get_image_tag($image)
         <img src="' . $image['url'] . '"
              id="imaginary-image-' . $image['id'] . '"
              width="' . $image['width'] . '"
-             height="' . $image['height'] . '"
-             alt="' . $image['alt_text'] . '">';
+             height="' . $image['height'] . '"';
+
+    if ($image['alt_text']) {
+        $html .= ' alt=' . $image['alt_text'];
+    }
+
+    $html .= '>';
 
     return $html;
 }
@@ -262,17 +238,18 @@ function imaginary_get_image_tag($image)
  * @param array $image
  * @return array
  */
-function imaginary_get_image_data($image_id, $size = 'thumbnail')
+function imaginary_get_image_data($image_id, $options)
 {
-    $image = wp_get_attachment_image_src($image_id, $size);
-    $alt_text = get_post_meta($image_id, '_wp_attachment_image_alt');
+    $image = wp_get_attachment_image_src($image_id, $options['size']);
+    $alt_text = get_post_meta($image_id, '_wp_attachment_image_alt', true);
+
     return array(
         'url' => $image[0],
         'width' => $image[1],
         'height' => $image[2],
         'resized' => $image[3],
         'id' => $image_id,
-        'alt_text' => $alt_text[0]
+        'alt_text' => $alt_text
     );
 }
 

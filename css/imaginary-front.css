@@ -2,3 +2,6 @@ ul.imaginary {
     list-style: none;
     margin: 0;
 }
+ul.imaginary.fixed-height {
+    overflow: hidden;
+}
