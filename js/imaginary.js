@@ -58,7 +58,7 @@ function imaginaryAddedImageHtml(url, id, type) {
         '</div>';
 
     // Add to DOM
-    $('.imaginary-image-wrapper').append(output);
+    jQuery('.imaginary-image-wrapper').append(output);
 
     // Make new image sortable
     imaginarySortable();

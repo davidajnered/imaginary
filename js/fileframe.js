@@ -44,7 +44,7 @@ jQuery(document).ready(function($) {
                 var url = attachment.sizes != undefined ? attachment.sizes.thumbnail.url : attachment.url;
 
                 // Insert image to post type
-                imaginaryAddSelectedImage(url, attachment.id, 'image');
+                imaginaryAddedImageHtml(url, attachment.id, 'image');
 
                 // Restore the main post ID
                 wp.media.model.settings.post.id = wp_media_post_id;

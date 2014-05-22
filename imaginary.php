@@ -118,7 +118,7 @@ function imaginary_fields()
 
     $output .= '</div><div class="imaginary-buttons">';
 
-    foreach ($registered_types as $type) {
+    foreach (array_reverse($registered_types) as $type) {
         $output .= '<a id="imaginary-' . $type . '-add" href="#">Add ' . $type . '</a>';
     }
 
