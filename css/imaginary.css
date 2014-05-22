@@ -1,3 +1,6 @@
+.imaginary-image-wrapper {
+    overflow: hidden;
+}
 #imaginary_image_field .inside {
     overflow: hidden;
     margin: 0px;
@@ -34,10 +37,12 @@
 .imaginary-image .check div {
     background-position: -60px 0 !important;
 }
-a#imaginary-image-add {
-    display: block;
-    padding: 5px 0 0 3px;
+.imaginary-buttons {
     clear: both;
+    margin-top: 10px;
+}
+.imaginary-buttons a {
+    margin: 0 10px 0 3px;
 }
 #imaginary-settings-overridden {
     margin-top: 10px;

@@ -24,6 +24,11 @@ add_shortcode('imaginary', 'imaginary_shortcode');
 $db_settings_overridden = false;
 
 /**
+ * Registered types to be used with imaginary.
+ */
+$registered_types = array();
+
+/**
  * Init...
  */
 function imaginary_init()
@@ -32,6 +37,21 @@ function imaginary_init()
     if (function_exists('imaginary_settings')) {
         global $db_settings_overridden;
         $db_settings_overridden = true;
+    }
+
+    global $registered_types;
+    if (function_exists('imaginary_register_types')) {
+        $registered_types = imaginary_register_types();
+
+        // Check format and add image
+        if (is_array($registered_types)) {
+            $registered_types = array_merge($registered_types, array('image'));
+        }
+    }
+
+    // Fallback
+    if (!is_array($registered_types)) {
+        $registered_types = array('image');
     }
 }
 
@@ -49,9 +69,9 @@ function imaginary_create_field()
 
     foreach ($post_types as $post_type) {
         add_meta_box(
-            'imaginary_image_field',
+            'imaginary_fields',
             'Images',
-            'imaginary_image_field',
+            'imaginary_fields',
             $post_type,
             'normal',
             'default'
@@ -62,35 +82,106 @@ function imaginary_create_field()
 /**
  * Load added images and button and print to DOM.
  */
-function imaginary_image_field()
+function imaginary_fields()
 {
-    global $post;
+    global $post, $registered_types;
+
+    $errors = array();
     $output = '<div class="imaginary-image-wrapper sortable">';
 
-    $image_ids = get_post_meta($post->ID, 'imaginary_images', true);
-    if ($image_ids) {
-        foreach ($image_ids as $index => $image_id) {
-            $image_data = imaginary_get_image_data($image_id, 'thumbnail');
+    $imaginaries = get_post_meta($post->ID, 'imaginary', true);
+    if ($imaginaries) {
+        foreach ($imaginaries as $index => $imaginary) {
+            $function_name = 'imaginary_' . $imaginary['type'] . '_field_data';
 
-            $output .= '
-                <div class="imaginary-image attachment selected details">
-                    <div class="imaginary-image-menu">
-                        <span class="imaginary-image-id check wp-core-ui wp-ui-highlight">#' . ($index + 1) . '</span>
-                        <a class="imaginary-image-delete check" href="#" title="Deselect">
-                            <div class="media-modal-icon"></div>
-                        </a>
-                    </div>
-                    <img src="' . $image_data['url'] . '">
-                    <input type="hidden" name="imaginary_images[]" value="' . $image_id . '">
-                </div>
-            ';
+            // If function does not exist, just continue...
+            if (!function_exists($function_name)) {
+                $errors[] = 'the function <b>' . $function_name . '</b> does not exist for registered type';
+                continue;
+            }
+
+            // imaginary_[type]_field_data
+            $imaginary_data = $function_name($imaginary['id']);
+
+            // Validate imaginary_data
+            if (!is_array($imaginary_data)) {
+                $errors[] = 'Data returned from <b>' . $function_name . '</b> is badly formatted';
+            }
+
+            if (!isset($imaginary_data['id'], $imaginary_data['image_url'], $imaginary_data['type'])) {
+                $errors[] = 'Missing data returned from <b>' . $function_name . '</b>';
+            }
+
+            $output .= imaginary_get_added_image_html($imaginary_data['image_url'], $imaginary_data['id'], $imaginary_data['type']);
         }
     }
 
+    $output .= '</div><div class="imaginary-buttons">';
+
+    foreach ($registered_types as $type) {
+        $output .= '<a id="imaginary-' . $type . '-add" href="#">Add ' . $type . '</a>';
+    }
+
+    if ($errors) {
+        $output .= '<div class="imaginary-errors">';
+        $output .= '<h4>Errors</h4>';
+        $output .= implode('<br>', $errors);
+        $output .= '</div>';
+    }
+
     $output .= '</div>';
-    $output .= '<a id="imaginary-image-add" href="#">Add image</a>';
+
+    // If type has a modal, render it here
+    foreach ($registered_types as $type) {
+        $function_name = 'imaginary_' . $type .'_modal';
+        if (function_exists($function_name)) {
+            $output .= $function_name();
+        }
+    }
 
     print $output;
+}
+
+/**
+ * Get html for added images in posts (in admin).
+ *
+ * @param string $image_url
+ * @param int $id
+ * @param sting $type
+ */
+function imaginary_get_added_image_html($image_url, $id, $type)
+{
+    return '
+        <div class="imaginary-image attachment selected details">
+            <div class="imaginary-image-menu">
+                <span class="imaginary-image-id check wp-core-ui wp-ui-highlight">#</span>
+                <a class="imaginary-image-delete check" href="#" title="Deselect">
+                    <div class="media-modal-icon"></div>
+                </a>
+            </div>
+            <img src="' . $image_url . '">
+            <input type="hidden" class="imaginary-id" name="imaginary[' . $id . '][id]" value="' . $id . '">
+            <input type="hidden" class="imaginary-sort-order" name="imaginary[' . $id . '][sort_order]" value=""> <!-- js -->
+            <input type="hidden" class="imaginary-type" name="imaginary[' . $id . '][type]" value="' . $type . '">
+        </div>
+    ';
+}
+
+/**
+ * Get data for admin image field.
+ *
+ * @param int $id
+ */
+function imaginary_image_field_data($image_id)
+{
+    $image_data = imaginary_get_image_data($image_id, array('size' => 'thumbnail'));
+    $imaginary_data = array(
+        'id' => $image_id,
+        'image_url' => $image_data['url'],
+        'type' => 'image'
+    );
+
+    return $imaginary_data;
 }
 
 /**
@@ -122,11 +213,11 @@ function imaginary_load_front_js_and_css()
  */
 function imaginary_save_images($post_id)
 {
-    update_post_meta($post_id, 'imaginary_images', $_POST['imaginary_images']);
+    update_post_meta($post_id, 'imaginary', $_POST['imaginary']);
 }
 
 /**
- * Return a specific image.
+ * Return markup for requested images.
  *
  * @param array $options
  * @return array with all image options
@@ -135,7 +226,7 @@ function imaginary($user_options = array())
 {
     global $post;
 
-    $image_ids = get_post_meta($post->ID, 'imaginary_images', true);
+    $imaginaries = get_post_meta($post->ID, 'imaginary', true);
 
     // Merge user options with default values
     $options = array_merge(imaginary_get_option_defaults(), $user_options);
@@ -146,16 +237,19 @@ function imaginary($user_options = array())
     $styles = $options['height'] ? ' style="height:' . $options['height'] . 'px;"' : '';
 
     // Build output at the same time as looping data
-    $images = array();
+    // $images = array();
     $output = '<ul class="imaginary' . $classes . '"' . $styles . '>';
-    if ($image_ids) {
-        foreach ($image_ids as $index => $image_id) {
+    if ($imaginaries) {
+        foreach ($imaginaries as $index => $imaginary) {
             // If index is set and equal to the one in the loop, or if index is not set at all
             if ((isset($options['index']) && $options['index'] == $index + 1) || !isset($options['index'])) {
-                $image = imaginary_get_image_data($image_id, $options);
-                $images[$index] = $image;
                 $output .= '<li>';
-                $output .= imaginary_get_image_tag($image);
+
+                //$images[$index] = $image;
+                $function_name = 'imaginary_get_' . $imaginary['type'] . '_html';
+                $output .= $function_name($imaginary['id'], $options);
+                // Register the render function somewhere to enable support for extra content types
+
                 $output .= '<div class="caption">' . $options['caption'] . '</div>';
                 $outpuy .= '</li>';
             }
@@ -211,20 +305,22 @@ function imaginary_get_option_defaults()
 }
 
 /**
- * Generate img tag.
+ * Generate img markup.
  *
  * @param array $image
  */
-function imaginary_get_image_tag($image)
+function imaginary_get_image_html($id, $options)
 {
-    $html = '
-        <img src="' . $image['url'] . '"
-             id="imaginary-image-' . $image['id'] . '"
-             width="' . $image['width'] . '"
-             height="' . $image['height'] . '"';
+    $image_data = imaginary_get_image_data($id, $options);
 
-    if ($image['alt_text']) {
-        $html .= ' alt=' . $image['alt_text'];
+    $html = '
+        <img src="' . $image_data['url'] . '"
+             id="imaginary-image-' . $image_data['id'] . '"
+             width="' . $image_data['width'] . '"
+             height="' . $image_data['height'] . '"';
+
+    if ($image_data['alt_text']) {
+        $html .= ' alt=' . $image_data['alt_text'];
     }
 
     $html .= '>';

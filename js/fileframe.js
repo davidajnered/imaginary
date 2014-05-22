@@ -44,19 +44,7 @@ jQuery(document).ready(function($) {
                 var url = attachment.sizes != undefined ? attachment.sizes.thumbnail.url : attachment.url;
 
                 // Insert image to post type
-                var output = '' +
-                    '<div class="imaginary-image attachment selected details">' +
-                        '<div class="imaginary-image-menu">' +
-                            '<span class="imaginary-image-id check wp-core-ui wp-ui-highlight">#' + index + '</span>' +
-                            '<a class="imaginary-image-delete check" href="#" title="Deselect"><div class="media-modal-icon"></div></a>' +
-                        '</div>' +
-                        '<img src="' + url + '">' +
-                        '<input type="hidden" name="imaginary_images[]" value="' + attachment.id + '">' +
-                    '</div>';
-
-                $('.imaginary-image-wrapper').append(output);
-
-                imaginarySortable();
+                imaginaryAddSelectedImage(url, attachment.id, 'image');
 
                 // Restore the main post ID
                 wp.media.model.settings.post.id = wp_media_post_id;
