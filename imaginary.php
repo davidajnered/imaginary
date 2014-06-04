@@ -247,8 +247,9 @@ function imaginary($user_options = array())
 
                 //$images[$index] = $image;
                 $function_name = 'imaginary_get_' . $imaginary['type'] . '_html';
-                $output .= $function_name($imaginary['id'], $options);
-                // Register the render function somewhere to enable support for extra content types
+                if (function_exists($function_name)) {
+                    $output .= $function_name($imaginary['id'], $options);
+                }
 
                 $output .= '<div class="caption">' . $options['caption'] . '</div>';
                 $outpuy .= '</li>';
