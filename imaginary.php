@@ -85,6 +85,20 @@ function imaginary_fields()
     $output = '<div class="imaginary-image-wrapper sortable">';
 
     $imaginaries = get_post_meta($post->ID, 'imaginary', true);
+
+    // Legacy - change meta key
+    if (!$imaginaries) {
+        $imaginaries = get_post_meta($post->ID, 'imaginary_images', true);
+        if ($imaginaries) {
+            foreach ($imaginaries as $index => $imaginary) {
+                $imaginaries[$index] = imaginary_image_field_data($imaginary);
+            }
+
+            update_post_meta($post->ID, 'imaginary', $imaginaries);
+            delete_post_meta($post->ID, 'imaginary_images');
+        }
+    }
+
     if ($imaginaries) {
         foreach ($imaginaries as $index => $imaginary) {
             $function_name = 'imaginary_' . $imaginary['type'] . '_field_data';
