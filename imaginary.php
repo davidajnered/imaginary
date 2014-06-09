@@ -26,7 +26,7 @@ $db_settings_overridden = false;
 /**
  * Registered types to be used with imaginary.
  */
-$registered_types = array();
+$registered_types = array('image');
 
 /**
  * Init...
@@ -41,17 +41,12 @@ function imaginary_init()
 
     global $registered_types;
     if (function_exists('imaginary_register_types')) {
-        $registered_types = imaginary_register_types();
+        $registered_external_types = imaginary_register_types();
 
         // Check format and add image
-        if (is_array($registered_types)) {
-            $registered_types = array_merge($registered_types, array('image'));
+        if (is_array($registered_external_types)) {
+            $registered_types = array_merge($registered_external_types, $registered_types);
         }
-    }
-
-    // Fallback
-    if (!is_array($registered_types)) {
-        $registered_types = array('image');
     }
 }
 
@@ -191,7 +186,7 @@ function imaginary_load_admin_js_and_css()
 {
     wp_enqueue_script('jquery');
     wp_enqueue_script('imaginary', '/wp-content/plugins/imaginary/js/imaginary.js', array('jquery'));
-    wp_enqueue_script('imaginary_fileframe', '/wp-content/plugins/imaginary/js/fileframe.js', array('jquery'));
+    wp_enqueue_script('imaginary_fileframe', '/wp-content/plugins/imaginary/js/modal.js', array('jquery'));
     wp_enqueue_style('imaginary', '/wp-content/plugins/imaginary/css/imaginary.css');
 }
 

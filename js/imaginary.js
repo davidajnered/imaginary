@@ -60,6 +60,8 @@ function imaginaryAddedImageHtml(url, id, type) {
     // Add to DOM
     jQuery('.imaginary-image-wrapper').append(output);
 
-    // Make new image sortable
+    // Make new image(s) sortable
     imaginarySortable();
+    imaginaryReindexImages();
+
 }
