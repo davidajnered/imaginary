@@ -313,7 +313,8 @@ function imaginary_get_option_defaults()
         'cycle' => false,
         'html' => true,
         'text' => '',
-        'height' => null
+        'height' => null,
+        'caption' => ''
     );
 }
 
