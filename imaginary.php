@@ -144,7 +144,7 @@ function imaginary_fields()
     foreach ($registered_types as $type) {
         $function_name = 'imaginary_' . $type .'_modal';
         if (function_exists($function_name)) {
-            $output .= $function_name();
+            add_action('admin_footer', $function_name);
         }
     }
 
@@ -254,14 +254,13 @@ function imaginary($user_options = array())
             if ((isset($options['index']) && $options['index'] == $index + 1) || !isset($options['index'])) {
                 $output .= '<li>';
 
-                //$images[$index] = $image;
                 $function_name = 'imaginary_get_' . $imaginary['type'] . '_html';
                 if (function_exists($function_name)) {
                     $output .= $function_name($imaginary['id'], $options);
                 }
 
                 $output .= '<div class="caption">' . $options['caption'] . '</div>';
-                $outpuy .= '</li>';
+                $output .= '</li>';
             }
         }
     }
