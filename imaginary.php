@@ -240,33 +240,37 @@ function imaginary($user_options = array())
     // Merge user options with default values
     $options = array_merge(imaginary_get_option_defaults(), $user_options);
 
-    // Classes and styles
+    // Classes
     $classes = $options['cycle'] == true ? ' cycle' : '';
     $classes .= $options['height'] ? ' fixed-height' : '';
+
+    // Styles
     $styles = $options['height'] ? ' style="height:' . $options['height'] . 'px;"' : '';
 
     // Build output at the same time as looping data
-    // $images = array();
-    $output = '<ul class="imaginary' . $classes . '"' . $styles . '>';
     if ($imaginaries) {
         foreach ($imaginaries as $index => $imaginary) {
             // If index is set and equal to the one in the loop, or if index is not set at all
             if ((isset($options['index']) && $options['index'] == $index + 1) || !isset($options['index'])) {
-                $output .= '<li>';
-
+                // Content type output
                 $function_name = 'imaginary_get_' . $imaginary['type'] . '_html';
-                if (function_exists($function_name)) {
-                    $output .= $function_name($imaginary['id'], $options);
-                }
+                $output = function_exists($function_name) ? $function_name($imaginary['id'], $options) : '';
 
-                $output .= '<div class="caption">' . $options['caption'] . '</div>';
-                $output .= '</li>';
+                // Caption
+                $caption ? isset($options['caption']) ? '<div class="caption">' . $options['caption'] . '</div>' : '';
+
+                $li = '<li>' . $output . $caption . '</li>';
             }
         }
     }
-    $output .= '</ul>';
 
-    return $options['html'] ? $output : $images;
+    $output = '
+        <ul class="imaginary' . $classes . '"' . $styles . '>
+            ' . $li . '
+        </ul>
+    ';
+
+    return $options['html'] ? $output : $imaginaries;
 }
 
 /**
