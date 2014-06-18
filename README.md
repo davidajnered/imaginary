@@ -64,3 +64,103 @@ function imaginary_settings() {
     );
 }
 ```
+
+
+## Custom content type
+This is an example of how to register a custom content type with imaginary
+
+```
+/**
+ *
+ */
+function imaginary_register_types()
+{
+    return array('video');
+}
+
+/**
+ * imaginary_[type]_field_data
+ */
+function imaginary_video_field_data($id)
+{
+    $image_data = wp_get_attachment_image_src(get_post_thumbnail_id($id), 'thumbnail');
+
+    return array(
+        'id' => $id,
+        'type' => 'video',
+        'image_url' => $image_data[0]
+    );
+}
+
+/**
+ * Called from modal js when a new item is selected and added.
+ *
+ * This is called automatically from plugin on page load, only needs this custom function for your custom modal
+ */
+function imaginary_video_ajax_field_data()
+{
+    $data = imaginary_video_field_data($_POST['id']);
+    $html = imaginary_get_added_image_html($data['image_url'], $data['id'], $data['type']);
+
+    wp_send_json($html);
+}
+add_action('wp_ajax_imaginary_video_ajax_field_data', 'imaginary_video_ajax_field_data');
+
+/**
+ * imaginary_get_[type]_html;
+ */
+function imaginary_get_video_html($id, $options = array())
+{
+    $shortcode = '[video id="' . $id . '"]';
+
+    return do_shortcode($shortcode);
+}
+
+/**
+ * imaginary_[type]_modal
+ *
+ * Modal markup and javascript
+ */
+function imaginary_video_modal()
+{
+    $modal_selector = 'imaginary-video-modal';
+    $type = 'video';
+
+    // The modal html code
+    lrfmedia_video_video_code_modal($modal_selector, false);
+
+    // Scripts for controlling the modal
+    $script = "<script type=\"text/javascript\">
+        jQuery(document).ready(function($) {
+            var type = '" . $type . "',
+                modal_selector = '." . $modal_selector . "',
+                modal = $(modal_selector);
+
+            $('#imaginary-video-add').click(function() {
+                modal.show();
+            });
+
+            $(document).on('click', modal_selector + ' .modal-content a', function(event) {
+                event.preventDefault;
+
+                var data = {
+                    action: 'imaginary_' + type + '_ajax_field_data',
+                    id: $(this).data('postId')
+                };
+
+                jQuery.post(ajaxurl, data, function(html) {
+                    if (html) {
+                        // Append html to imaginary wrapper
+                        $('#imaginary_fields .imaginary-image-wrapper').append(html);
+
+                        // Re-index images
+                        imaginaryReindexImages();
+                    }
+                });
+            });
+        });
+    </script>";
+
+    echo $script;
+}
+```
