@@ -259,7 +259,7 @@ function imaginary($user_options = array())
                 $output = function_exists($function_name) ? $function_name($imaginary['id'], $options) : '';
 
                 // Caption
-                $caption ? isset($options['caption']) ? '<div class="caption">' . $options['caption'] . '</div>' : '';
+                $caption = isset($options['caption']) ? '<div class="caption">' . $options['caption'] . '</div>' : '';
 
                 $li = '<li>' . $output . $caption . '</li>';
             }
