@@ -250,6 +250,7 @@ function imaginary($user_options = array())
     $styles = $options['height'] ? ' style="height:' . $options['height'] . 'px;"' : '';
 
     // Build output at the same time as looping data
+    $li = '';
     if ($imaginaries) {
         foreach ($imaginaries as $index => $imaginary) {
             // If index is set and equal to the one in the loop, or if index is not set at all
@@ -261,7 +262,7 @@ function imaginary($user_options = array())
                 // Caption
                 $caption = isset($options['caption']) ? '<div class="caption">' . $options['caption'] . '</div>' : '';
 
-                $li = '<li>' . $output . $caption . '</li>';
+                $li .= '<li>' . $output . $caption . '</li>';
             }
         }
     }
