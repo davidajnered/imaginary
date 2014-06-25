@@ -55,6 +55,8 @@ function imaginary_init()
  */
 function imaginary_create_field()
 {
+    global $db_settings_overridden;
+
     $post_types = get_option('imaginary_settings_post_types');
 
     if ($db_settings_overridden) {
