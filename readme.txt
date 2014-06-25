@@ -1,10 +1,10 @@
-=== Plugin Name ===
+=== Imaginary ===
 Contributors: davidajnered
 Donate link: http://www.davidajnered.com/
 Tags: image, images, duplicatable images, multiple images, slideshow, gallery, extra field, meta, posts, pages, custom post types,
 Requires at least: 3.0
 Tested up to: 3.9.0
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 
 Add extra images to your posts and pages.
@@ -69,6 +69,8 @@ function imaginary_settings() {
     );
 }
 `
+
+**For more complete and more up to date documentation, see [https://github.com/davidajnered/imaginary](https://github.com/davidajnered/imaginary)**
 
 == Installation ==
 

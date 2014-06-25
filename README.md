@@ -5,22 +5,20 @@ Imaginary adds duplicatable image fields to your post types. You select your ima
 Except installing the plugin you have to enable it for the post types you want to use it with. You find the setting under settings -> media.
 
 ## Usage
-The <b>options</b> array contains variables to control the function output. All values are optional, the plugin have fallbacks for everything.
+The **options** array contains variables to control the function output. All values are optional, the plugin have fallbacks for everything.
 
-<pre>
-<b>(int) index</b>
+* **(int) index**
     index of a specific image. If empty all images are returned.
-    <i>Default: null</i>
-<b>(string) size</b>
+    *Default: null*
+* **(string) size**
     name of your image size.
-    <i>Default: medium</i>
-<b>(bool) cycle</b>
+    *Default: medium*
+* **(bool) cycle**
     display images as a slideshow
-    <i>Default: false</i>
-<b>(bool) html</b>
+    *Default: false*
+* **(bool) html**.
     return html or array with data
-    <i>Default: true</i>
-</pre>
+    *Default: true*
 
 ### Simple example
 The example below will show you all selected images as a list. The default values seen above will be used.
@@ -29,7 +27,7 @@ imaginary();
 ```
 
 ### Get a specific imaginary images
-Use the <b>index</b> option to select the image you want. Image index starts at one. Hover the image when editing your post or page to see the index number. Use any of the other options to customize your use of Imaginary.
+Use the **index** option to select the image you want. Image index starts at one. Hover the image when editing your post or page to see the index number. Use any of the other options to customize your use of Imaginary.
 ```
 imaginary(array('index' => 1));
 ```
@@ -67,11 +65,14 @@ function imaginary_settings() {
 
 
 ## Custom content type
-This is an example of how to register a custom content type with imaginary
+This is an example of how to register a custom content type with imaginary, in this case videos.
+This is still experimental, and documentation might not be complete.
 
 ```
 /**
+ * Register all your custom types in an array
  *
+ * @return array
  */
 function imaginary_register_types()
 {
@@ -80,6 +81,10 @@ function imaginary_register_types()
 
 /**
  * imaginary_[type]_field_data
+ * This function is called from imaginary core. I expects an id,
+ * type and an thumbnail image url in the return array.
+ *
+ * @return array
  */
 function imaginary_video_field_data($id)
 {
@@ -93,8 +98,8 @@ function imaginary_video_field_data($id)
 }
 
 /**
+ * imaginary_[type]_ajax_field_data
  * Called from modal js when a new item is selected and added.
- *
  * This is called automatically from plugin on page load, only needs this custom function for your custom modal
  */
 function imaginary_video_ajax_field_data()
@@ -108,6 +113,9 @@ add_action('wp_ajax_imaginary_video_ajax_field_data', 'imaginary_video_ajax_fiel
 
 /**
  * imaginary_get_[type]_html;
+ * return the html you wish to display for your visitors.
+ *
+ * @return string
  */
 function imaginary_get_video_html($id, $options = array())
 {
@@ -119,48 +127,14 @@ function imaginary_get_video_html($id, $options = array())
 /**
  * imaginary_[type]_modal
  *
- * Modal markup and javascript
+ * Print the modal markup and javascript.
  */
 function imaginary_video_modal()
 {
-    $modal_selector = 'imaginary-video-modal';
-    $type = 'video';
-
     // The modal html code
-    lrfmedia_video_video_code_modal($modal_selector, false);
+    echo 'your custom modal html';
 
     // Scripts for controlling the modal
-    $script = "<script type=\"text/javascript\">
-        jQuery(document).ready(function($) {
-            var type = '" . $type . "',
-                modal_selector = '." . $modal_selector . "',
-                modal = $(modal_selector);
-
-            $('#imaginary-video-add').click(function() {
-                modal.show();
-            });
-
-            $(document).on('click', modal_selector + ' .modal-content a', function(event) {
-                event.preventDefault;
-
-                var data = {
-                    action: 'imaginary_' + type + '_ajax_field_data',
-                    id: $(this).data('postId')
-                };
-
-                jQuery.post(ajaxurl, data, function(html) {
-                    if (html) {
-                        // Append html to imaginary wrapper
-                        $('#imaginary_fields .imaginary-image-wrapper').append(html);
-
-                        // Re-index images
-                        imaginaryReindexImages();
-                    }
-                });
-            });
-        });
-    </script>";
-
-    echo $script;
+    echo 'your custom modal javascript';
 }
 ```
