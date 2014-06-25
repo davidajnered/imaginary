@@ -100,7 +100,8 @@ function imaginary_video_field_data($id)
 /**
  * imaginary_[type]_ajax_field_data
  * Called from modal js when a new item is selected and added.
- * This is called automatically from plugin on page load, only needs this custom function for your custom modal
+ * This is called automatically from plugin on page load,
+ * only needs this custom function for your custom modal
  */
 function imaginary_video_ajax_field_data()
 {
