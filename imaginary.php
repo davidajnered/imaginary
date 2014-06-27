@@ -224,7 +224,9 @@ function imaginary_load_front_js_and_css()
  */
 function imaginary_save_images($post_id)
 {
-    update_post_meta($post_id, 'imaginary', $_POST['imaginary']);
+    if (isset($_POST['imaginary'])) {
+        update_post_meta($post_id, 'imaginary', $_POST['imaginary']);
+    }
 }
 
 /**
