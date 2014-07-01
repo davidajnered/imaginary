@@ -111,6 +111,13 @@ function imaginary_fields()
                 continue;
             }
 
+            // Check if fullsize image exist. If it doesn't we assume it's been deleted
+            if (wp_get_attachment_image_src($imaginary['id'], 'full') == false) {
+                unset($imaginaries[$index]);
+                update_post_meta($post->ID, 'imaginary', $imaginaries);
+                continue;
+            }
+
             // imaginary_[type]_field_data
             $imaginary_data = $function_name($imaginary['id']);
 
